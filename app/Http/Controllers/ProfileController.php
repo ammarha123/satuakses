@@ -2,51 +2,83 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function edit()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = Auth::user();
+
+        return view('profile.edit', compact('user'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
+        $user = Auth::user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        $validated = $request->validate([
+            'name'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255', Rule::unique('users','email')->ignore($user->id)],
+            'phone'    => ['nullable', 'string', 'max:30'],
+            'gender'   => ['nullable', 'in:Laki-laki,Perempuan'],
+            'province' => ['nullable', 'string', 'max:100'],
+            'city'     => ['nullable', 'string', 'max:100'],
+            'bio'      => ['nullable', 'string', 'max:1000'],
+            'profile_photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ]);
+
+        // normalisasi email
+        $validated['email'] = Str::lower($validated['email']);
+
+        // handle foto
+        if ($request->hasFile('profile_photo')) {
+            // hapus lama
+            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+            $validated['profile_photo'] = $path;
         }
 
-        $request->user()->save();
+        $user->update($validated);
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return back()->with('success', 'Profil berhasil diperbarui.');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function updatePassword(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $request->validate([
+            'current_password'      => ['required', 'current_password'],
+            'password'              => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
-        $user = $request->user();
+        $user = Auth::user();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'Kata sandi berhasil diperbarui.');
+    }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'confirm' => ['required', 'in:HAPUS'],
+        ], [
+            'confirm.in' => 'Tulis "HAPUS" untuk konfirmasi.',
+        ]);
+
+        $user = Auth::user();
+
+        // hapus foto bila ada
+        if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+            Storage::disk('public')->delete($user->profile_photo);
+        }
 
         Auth::logout();
 
@@ -55,6 +87,6 @@ class ProfileController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return Redirect::to('/');
+        return redirect()->route('index')->with('success', 'Akun berhasil dihapus.');
     }
 }

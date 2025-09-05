@@ -10,8 +10,17 @@ return new class extends Migration {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('judul');
+            $table->string('slug')->unique();
             $table->string('kategori');
             $table->string('tingkat');
+            $table->text('deskripsi');
+            $table->date('tanggal_mulai')->nullable();
+            $table->string('durasi')->nullable();
+            $table->string('link_pendaftaran')->nullable();
+            $table->boolean('sertifikat_diberikan')->default(true);
+            $table->integer('kuota')->nullable();
+            $table->string('status')->default('Active');
+            $table->string('gambar')->nullable();
             $table->timestamps();
         });
     }

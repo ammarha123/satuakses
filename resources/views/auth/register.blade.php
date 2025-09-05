@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Daftar - SatuAkses</title>
@@ -56,23 +57,46 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
         <div class="register-card">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <b>Form tidak valid:</b>
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $e)
+                            <li>{{ $e }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <h4 class="fw-bold text-center mb-4">Buat Akun</h4>
 
             <form method="POST" action="{{ route('register') }}">
                 @csrf
-
+                <div class="mb-2">
+                    <label class="form-label">Nama</label>
+                    <input type="name" name="name" class="form-control" placeholder="Masukkan nama kamu" required
+                        value="{{ old('name') }}">
+                </div>
                 <div class="mb-2">
                     <label class="form-label">Email</label>
-                    <input type="email" name="email" class="form-control" placeholder="Masukkan email kamu" required value="{{ old('email') }}">
+                    <input type="email" name="email" class="form-control" placeholder="Masukkan email kamu" required
+                        value="{{ old('email') }}">
                 </div>
 
                 <div class="mb-2">
                     <label class="form-label">Kata Sandi</label>
-                    <input type="password" name="password" class="form-control" placeholder="Masukkan Kata Sandi..." required>
+                    <input type="password" name="password" class="form-control" placeholder="Masukkan Kata Sandi..."
+                        required>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Ketik Ulang Kata Sandi</label>
+                    <input type="password" name="password_confirmation" class="form-control"
+                        placeholder="Masukkan Ulang Kata Sandi..." required>
                 </div>
 
                 <div class="mb-2">
@@ -82,12 +106,12 @@
 
                 <div class="mb-2">
                     <label class="form-label">Provinsi</label>
-                    <input type="text" name="provinsi" class="form-control" required>
+                    <input type="text" name="province" class="form-control" required>
                 </div>
 
                 <div class="mb-2">
                     <label class="form-label">Kab/Kota</label>
-                    <input type="text" name="kota" class="form-control" required>
+                    <input type="text" name="city" class="form-control" required>
                 </div>
 
                 <div class="row mb-2">
@@ -97,7 +121,7 @@
                     </div>
                     <div class="col">
                         <label class="form-label">Jenis Kelamin</label>
-                        <select name="jenis_kelamin" class="form-control" required>
+                        <select name="gender" class="form-control" required>
                             <option value="">Pilih</option>
                             <option value="Laki-laki">Laki-laki</option>
                             <option value="Perempuan">Perempuan</option>
@@ -110,11 +134,13 @@
                 </div>
 
                 <div class="text-center">
-                    <small>Sudah punya akun? <a href="{{ route('login') }}" class="text-primary">Masuk di sini</a></small>
+                    <small>Sudah punya akun? <a href="{{ route('login') }}" class="text-primary">Masuk di
+                            sini</a></small>
                 </div>
             </form>
         </div>
     </div>
 
 </body>
+
 </html>

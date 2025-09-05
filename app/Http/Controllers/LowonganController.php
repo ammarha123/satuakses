@@ -9,7 +9,7 @@ class LowonganController extends Controller
 {
     public function index()
     {
-        $lowongans = Lowongan::latest('waktu_posting')->take(6)->get();
+        $lowongans = Lowongan::latest('waktu_posting')->take(3)->get();
 
         return view('index', compact('lowongans'));
     }

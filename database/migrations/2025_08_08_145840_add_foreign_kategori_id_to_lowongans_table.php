@@ -12,16 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('lowongans', function (Blueprint $table) {
-            $table->string('status')->default('Active')->after('waktu_posting');
-            $table->string('dekskripsi')->default('')->after('posisi');
+            $table->unsignedBigInteger('kategori_id')->nullable()->after('id');
+
+            $table->foreign('kategori_id')
+                ->references('id')
+                ->on('kategori_lowongans')
+                ->onDelete('cascade');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('lowongans', function (Blueprint $table) {
-            $table->dropColumn('status');
-            $table->dropColumn(columns: 'dekskripsi');
+            //
         });
     }
 };

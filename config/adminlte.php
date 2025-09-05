@@ -299,89 +299,138 @@ return [
     */
 
     'menu' => [
-        // Navbar items:
-        [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
-        ],
-        [
-            'type' => 'fullscreen-widget',
-            'topnav_right' => true,
-        ],
-
-        [
-            'header' => 'ADMIN MENU'
-        ],
-        [
-            'text' => 'Dashboard',
-            'url'  => 'admin',
-            'icon' => 'fas fa-home',
-        ],
-        [
-            'text' => 'Manajemen Lowongan',
-            'icon' => 'fas fa-briefcase',
-            'submenu' => [
-                [
-                    'text' => 'Kelola Lowongan',
-                    'url'  => 'admin/lowongan',
-                ],
-                [
-                    'text' => 'Kategori Lowongan',
-                    'url'  => 'admin/kategori-lowongan',
-                ],
-            ],
-        ],
-        [
-            'text' => 'Manajemen Kursus',
-            'icon' => 'fas fa-chalkboard-teacher',
-            'submenu' => [
-                [
-                    'text' => 'Kelola Kursus',
-                    'url'  => 'admin/kursus',
-                ],
-                [
-                    'text' => 'Kategori Kursus',
-                    'url'  => 'admin/kategori-kursus',
-                ],
-            ],
-        ],
-        [
-            'text' => 'List Perusahaan',
-            'url'  => 'admin/company',
-            'icon' => 'fas fa-building',
-        ],
-        [
-            'text' => 'List Pengguna',
-            'url'  => 'admin/user',
-            'icon' => 'fas fa-users',
-        ],
-        [
-            'text' => 'Jenis Disabilitas',
-            'url'  => 'admin/difabel',
-            'icon' => 'fas fa-wheelchair',
-        ],
-        [
-            'text' => 'Notifikasi',
-            'url'  => 'admin/notifications',
-            'icon' => 'fas fa-bell',
-        ],
-        [
-            'text' => 'Pengaturan',
-            'icon' => 'fas fa-cogs',
-            'submenu' => [
-                [
-                    'text' => 'Role & Permission',
-                    'url'  => 'admin/roles',
-                ],
-                [
-                    'text' => 'Site Settings',
-                    'url'  => 'admin/settings',
-                ],
-            ],
-        ],
-
+    // Navbar items:
+    [
+        'type' => 'navbar-search',
+        'text' => 'search',
+        'topnav_right' => true,
     ],
+    [
+        'type' => 'fullscreen-widget',
+        'topnav_right' => true,
+    ],
+
+    // ===== ADMIN SIDE =====
+    [
+        'header' => 'ADMIN MENU',
+        'can'    => 'menu-admin-only',
+    ],
+    [
+        'text' => 'Dashboard',
+        'url'  => 'admin',
+        'icon' => 'fas fa-home',
+        'can'  => 'menu-admin-only',
+    ],
+    [
+        'text' => 'Manajemen Lowongan',
+        'icon' => 'fas fa-briefcase',
+        'can'  => 'menu-admin-only',
+        'submenu' => [
+            [
+                'text' => 'Kelola Lowongan',
+                'url'  => 'admin/lowongan',
+            ],
+            [
+                'text' => 'Kategori Lowongan',
+                'url'  => 'admin/kategori-lowongan',
+            ],
+        ],
+    ],
+    [
+        'text' => 'Manajemen Kursus',
+        'icon' => 'fas fa-chalkboard-teacher',
+        'can'  => 'menu-admin-only',
+        'submenu' => [
+            [
+                'text' => 'Kelola Kursus',
+                'url'  => 'admin/kursus',
+            ],
+            [
+                'text' => 'Kategori Kursus',
+                'url'  => 'admin/kategori-kursus',
+            ],
+        ],
+    ],
+    [
+        'text' => 'List Perusahaan',
+        'url'  => 'admin/company',
+        'icon' => 'fas fa-building',
+        'can'  => 'menu-admin-only',   // hidden for employer
+    ],
+    [
+        'text' => 'List Pengguna',
+        'url'  => 'admin/user',
+        'icon' => 'fas fa-users',
+        'can'  => 'menu-admin-only',   // hidden for employer
+    ],
+    [
+        'text' => 'Jenis Disabilitas',
+        'url'  => 'admin/difabel',
+        'icon' => 'fas fa-wheelchair',
+        'can'  => 'menu-admin-only',
+    ],
+    [
+        'text' => 'Notifikasi',
+        'url'  => 'admin/notifications',
+        'icon' => 'fas fa-bell',
+        'can'  => 'menu-admin-only',
+    ],
+    [
+        'text' => 'Pengaturan',
+        'icon' => 'fas fa-cogs',
+        'can'  => 'menu-admin-only',
+        'submenu' => [
+            ['text' => 'Role & Permission', 'url' => 'admin/roles'],
+            ['text' => 'Site Settings',     'url' => 'admin/settings'],
+        ],
+    ],
+
+    // ===== EMPLOYER SIDE =====
+    [
+        'header' => 'EMPLOYER MENU',
+        'can'    => 'menu-employer-only',
+    ],
+    [
+        'text' => 'Dashboard',
+        'url'  => 'employer',
+        'icon' => 'fas fa-home',
+        'can'  => 'menu-employer-only',
+    ],
+    [
+        'text' => 'Manajemen Lowongan',
+        'icon' => 'fas fa-briefcase',
+        'can'  => 'menu-employer-only',
+        'submenu' => [
+            [
+                'text' => 'Kelola Lowongan',
+                'url'  => 'employer/lowongan',
+            ],
+            [
+                'text' => 'Kategori Lowongan',
+                'url'  => 'employer/kategori-lowongan',
+            ],
+        ],
+    ],
+    [
+        'text' => 'Lamaran Masuk',
+        'url'  => 'employer/applications',
+        'icon' => 'fas fa-inbox',
+        'can'  => 'menu-employer-only',
+    ],
+    [
+        'text' => 'Notifikasi',
+        'url'  => 'employer/notifications',
+        'icon' => 'fas fa-bell',
+        'can'  => 'menu-employer-only',
+    ],
+    [
+        'text' => 'Pengaturan',
+        'url'  => 'employer/settings',
+        'icon' => 'fas fa-cogs',
+        'can'  => 'menu-employer-only',
+    ],
+],
+
 
     /*
     |--------------------------------------------------------------------------

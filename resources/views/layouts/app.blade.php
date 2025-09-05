@@ -11,6 +11,9 @@
 
     <!-- Google Fonts (optional for nicer headings) -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
     <link href="{{ asset('css/global.css') }}" rel="stylesheet">
 
     <style>
@@ -29,66 +32,89 @@
 </head>
 
 <body>
-
-    {{-- Navbar --}}
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg bg-white border-bottom">
         <div class="container">
-            {{-- Branding --}}
-            <a class="navbar-brand fw-bold" href="{{ url('/') }}">
-                {{ config('app.name', 'Kesempatan Setara') }}
-            </a>
+            <a class="navbar-brand fw-bold" href="{{ route('index') }}">SatuAkses</a>
 
-            {{-- Role-based Extra Label --}}
-            @auth
-                @role('employer')
-                    <a href="{{ route('employer.dashboard') }}" class="ms-3 text-decoration-none text-primary fw-semibold">
-                        Company Dashboard
-                    </a>
-                @endrole
-
-                @role('admin')
-                    <a href="{{ route('admin.dashboard') }}" class="ms-3 text-decoration-none text-danger fw-semibold">
-                        Admin Dashboard
-                    </a>
-                @endrole
-            @endauth
-
-            {{-- Hamburger --}}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            {{-- Navbar Content --}}
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <li class="nav-item"><a class="nav-link" href="{{ route('lowongan.index') }}">Pekerjaan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ route('kursus.index') }}">Kursus</a></li>
+
                     @guest
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('login') }}">Masuk</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('register') }}">Daftar</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Masuk</a></li>
+                        <li class="nav-item"><a class="btn btn-primary btn-sm ms-lg-2"
+                                href="{{ route('register') }}">Daftar</a></li>
                     @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pekerjaan</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Kursus</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Profil</a>
-                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                {{ Auth::user()->name }}
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#"
+                                id="profileMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="fw-semibold">{{ Str::limit(Auth::user()->name, 14) }}</span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="profileMenu">
+
+                                @role('admin')
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                            href="{{ route('admin.dashboard') }}">
+                                            <i class="bi bi-speedometer2"></i> Admin Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                @endrole
+                                @role('employer')
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                            href="{{ route('employer.dashboard') }}">
+                                            <i class="bi bi-building"></i> Company Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                @endrole
+
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                        href="{{ route('profile.edit') }}">
+                                        <i class="bi bi-person"></i> Akun Saya
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                        href="{{ route('user.lamaran.index') }}">
+                                        <i class="bi bi-briefcase"></i> Lamaran Saya
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                        href="{{ route('user.mycourses.index') }}">
+                                        <i class="bi bi-mortarboard"></i> Kursus Saya
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2"
+                                        href="{{ route('settings.index') }}">
+                                        <i class="bi bi-gear"></i> Pengaturan
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+
                                 <li>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button class="dropdown-item" type="submit">Logout</button>
+                                        <button class="dropdown-item d-flex align-items-center gap-2">
+                                            <i class="bi bi-box-arrow-right"></i> Keluar
+                                        </button>
                                     </form>
                                 </li>
                             </ul>
@@ -98,10 +124,10 @@
             </div>
         </div>
     </nav>
+
     @yield('content')
 
-    {{-- Footer --}}
-    <footer class="bg-light py-4 mt-5">
+    <footer class="bg-light py-4">
         <div class="container text-center">
             <p class="mb-0">&copy; {{ date('Y') }} Kesempatan Setara. Semua Hak Dilindungi.</p>
         </div>

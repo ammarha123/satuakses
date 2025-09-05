@@ -31,7 +31,7 @@
                     <td>{{ $item->perusahaan }}</td>
                     <td>{{ $item->posisi }}</td>
                     <td>{{ $item->lokasi }}</td>
-                    <td>{{ $item->kategori ?? '-' }}</td>
+                    <td>{{ $item->kategori->name ?? '-' }}</td>
                     <td>{{ $item->created_at->diffForHumans() }}</td>
                     <td>{{ $item->status }}</td>
                     <td>

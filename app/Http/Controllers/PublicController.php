@@ -10,8 +10,8 @@ class PublicController extends Controller
 {
     public function index()
     {
-        $lowongans = Lowongan::latest()->take(6)->get();
-        $courses = Course::latest()->take(6)->get();
+        $lowongans = Lowongan::latest()->take(3)->get();
+        $courses = Course::latest()->take(3)->get();
 
         return view('index', compact('lowongans', 'courses'));
     }

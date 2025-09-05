@@ -11,15 +11,33 @@ class Lowongan extends Model
 
     protected $fillable = [
         'perusahaan',
-        'kategori',
+        'kategori_id',
         'lokasi',
         'posisi',
         'dekskripsi',
+        'slug',
+        'tipe_pekerjaan',
+        'persyaratan',
+        'fasilitas_disabilitas',
+        'gaji_min',
+        'gaji_max',
+        'kuota',
+        'batas_lamaran',
         'waktu_posting',
-        'status'
+        'status',
+        'is_terbuka'
     ];
 
     protected $casts = [
         'waktu_posting' => 'datetime',
     ];
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriLowongan::class, 'kategori_id');
+    }
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
 }
