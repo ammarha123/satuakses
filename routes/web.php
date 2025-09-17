@@ -40,7 +40,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [AdminController::class, 'index'])->name('dashboard');
-
+    Route::resource('lowongan', AdminLowonganController::class);
     Route::resource('kursus', KursusController::class)
         ->parameters(['kursus' => 'kursus']);
     Route::resource('courses.modules', ModuleController::class)->shallow();
