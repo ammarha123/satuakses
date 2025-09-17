@@ -28,7 +28,7 @@ class QuizController extends Controller
             'time_limit' => 'nullable|integer',
         ]);
         $quiz = $course->quizzes()->create($data);
-        return redirect()->route('quizzes.edit', $quiz)->with('success','Quiz dibuat. Tambahkan soal.');
+        return redirect()->route('admin.quizzes.edit', $quiz)->with('success','Quiz dibuat. Tambahkan soal.');
     }
 
     public function show(Quiz $quiz)
@@ -45,13 +45,12 @@ class QuizController extends Controller
 
     public function update(Request $request, Quiz $quiz)
     {
-        // update quiz
+ 
         $quiz->update($request->validate([
             'title'=>'required|string|max:255',
             'time_limit'=>'nullable|integer',
         ]));
 
-        // sinkronisasi soal (opsional dan simpel: hapus & buat ulang)
         if ($request->filled('questions')) {
             $quiz->questions()->delete();
             foreach ($request->input('questions', []) as $q) {
@@ -72,7 +71,7 @@ class QuizController extends Controller
     {
         $course = $quiz->course;
         $quiz->delete();
-        return redirect()->route('courses.quizzes.index', $course)->with('success','Quiz dihapus.');
+        return redirect()->route('admin.courses.quizzes.index', $course)->with('success','Quiz dihapus.');
     }
 }
 

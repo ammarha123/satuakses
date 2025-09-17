@@ -1,9 +1,10 @@
+{{-- filepath: c:\Users\Ammar\Documents\satuakses\resources\views\admin\quizzes\create.blade.php --}}
 @extends('adminlte::page')
 
-@section('title', 'Edit Quiz')
+@section('title', 'Buat Quiz Baru')
 
 @section('content_header')
-  <h1>Edit Quiz – {{ $quiz->course->judul }}</h1>
+  <h1>Buat Quiz Baru – {{ $course->judul }}</h1>
 @endsection
 
 @section('content')
@@ -15,120 +16,73 @@
     </div>
   @endif
 
-  <form action="{{ route('admin.quizzes.update', $quiz) }}" method="POST" id="quiz-form">
-    @csrf @method('PUT')
+  <form action="{{ route('admin.courses.quizzes.store', $course) }}" method="POST">
+    @csrf
     <div class="card mb-3">
       <div class="card-body">
         <div class="row">
           <div class="col-md-8 mb-3">
             <label class="form-label">Judul Quiz</label>
-            <input type="text" name="title" class="form-control" required value="{{ old('title', $quiz->title) }}">
+            <input type="text" name="title" class="form-control" required value="{{ old('title') }}">
           </div>
           <div class="col-md-4 mb-3">
             <label class="form-label">Batas Waktu (menit)</label>
-            <input type="number" name="time_limit" min="1" class="form-control" value="{{ old('time_limit', $quiz->time_limit) }}">
+            <input type="number" name="time_limit" min="1" class="form-control" value="{{ old('time_limit') }}">
           </div>
         </div>
       </div>
     </div>
-
-    {{-- Soal --}}
-    <div class="card">
-      <div class="card-header d-flex align-items-center justify-content-between">
-        <span>Soal</span>
-        <button type="button" class="btn btn-sm btn-outline-primary" id="add-question">
-          <i class="fas fa-plus"></i> Tambah Soal
-        </button>
-      </div>
-      <div class="card-body" id="questions-wrap">
-        @php $qidx = 0; @endphp
-        @foreach($quiz->questions as $q)
-          <div class="border rounded p-3 mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <strong>Soal #{{ $loop->iteration }}</strong>
-              <button type="button" class="btn btn-sm btn-link text-danger" onclick="this.closest('.border').remove()">Hapus</button>
-            </div>
-            <div class="mb-2">
-              <label class="form-label">Pertanyaan</label>
-              <textarea class="form-control" name="questions[{{ $qidx }}][question]" rows="2" required>{{ $q->question }}</textarea>
-            </div>
-            <div class="mb-2">
-              <label class="form-label">Opsi Jawaban</label>
-              <div class="row g-2" id="opts-{{ $qidx }}">
-                @foreach($q->options as $oi => $opt)
-                  <div class="col-12 mb-1">
-                    <input class="form-control" name="questions[{{ $qidx }}][options][{{ $oi }}]" value="{{ $opt->text }}" required>
-                  </div>
-                @endforeach
-              </div>
-              <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="addOption({{ $qidx }})">
-                + Tambah Opsi
-              </button>
-            </div>
-            <div class="mb-0">
-              <label class="form-label">Index Jawaban Benar (mulai 0)</label>
-              <input type="number" class="form-control" name="questions[{{ $qidx }}][correct]"
-                     value="{{ $q->correct_index ?? 0 }}" min="0">
-            </div>
-          </div>
-          @php $qidx++; @endphp
-        @endforeach
-      </div>
-      <div class="card-footer">
-        <button class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
-        <a href="{{ route('admin.quizzes.show', $quiz) }}" class="btn btn-secondary">Batal</a>
-      </div>
+    <div class="card-footer">
+      <button class="btn btn-primary"><i class="fas fa-save mr-1"></i>Simpan dan Masukkan Pertanyaan</button>
+      <a href="{{ route('admin.courses.quizzes.index', $course) }}" class="btn btn-secondary">Batal</a>
     </div>
   </form>
 @endsection
 
-@push('js')
+@section('js')
 <script>
-  const qWrap = document.getElementById('questions-wrap');
-  let qIndex = {{ $quiz->questions->count() }};
+  let questionIndex = 1;
 
-  document.getElementById('add-question').addEventListener('click', () => {
-    qWrap.insertAdjacentHTML('beforeend', questionTemplate(qIndex));
-    qIndex++;
-  });
-
-  function questionTemplate(qi) {
-    return `
-      <div class="border rounded p-3 mb-3">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <strong>Soal #${qi+1}</strong>
-          <button type="button" class="btn btn-sm btn-link text-danger" onclick="this.closest('.border').remove()">Hapus</button>
-        </div>
-        <div class="mb-2">
+  // Add new question
+  document.getElementById('add-question').addEventListener('click', function () {
+    const container = document.getElementById('questions-container');
+    const questionTemplate = `
+      <div class="question-item mb-4">
+        <div class="mb-3">
           <label class="form-label">Pertanyaan</label>
-          <textarea class="form-control" name="questions[${qi}][question]" rows="2" required></textarea>
+          <input type="text" name="questions[${questionIndex}][question]" class="form-control" placeholder="Masukkan pertanyaan" required>
         </div>
-        <div class="mb-2">
-          <label class="form-label">Opsi Jawaban</label>
-          <div class="row g-2" id="opts-${qi}">
-            ${optionInput(qi,0)}
-            ${optionInput(qi,1)}
+        <div class="mb-3">
+          <label class="form-label">Jawaban</label>
+          <div class="row">
+            ${[0, 1, 2, 3].map(i => `
+              <div class="col-md-6 mb-2">
+                <input type="text" name="questions[${questionIndex}][options][${i}]" class="form-control" placeholder="Pilihan ${i + 1}" required>
+              </div>
+            `).join('')}
           </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="addOption(${qi})">
-            + Tambah Opsi
-          </button>
         </div>
-        <div class="mb-0">
-          <label class="form-label">Index Jawaban Benar (mulai 0)</label>
-          <input type="number" class="form-control" name="questions[${qi}][correct]" value="0" min="0">
+        <div class="mb-3">
+          <label class="form-label">Jawaban Benar</label>
+          <select name="questions[${questionIndex}][correct]" class="form-select" required>
+            <option value="0">Pilihan 1</option>
+            <option value="1">Pilihan 2</option>
+            <option value="2">Pilihan 3</option>
+            <option value="3">Pilihan 4</option>
+          </select>
         </div>
+        <button type="button" class="btn btn-danger btn-sm remove-question">Hapus Pertanyaan</button>
       </div>
     `;
-  }
-  function optionInput(qi, oi) {
-    return `<div class="col-12 mb-1">
-      <input class="form-control" name="questions[${qi}][options][${oi}]" placeholder="Opsi ${oi+1}" required>
-    </div>`;
-  }
-  window.addOption = function(qi){
-    const c = document.getElementById('opts-'+qi);
-    const oi = c.children.length;
-    c.insertAdjacentHTML('beforeend', optionInput(qi, oi));
-  }
+    container.insertAdjacentHTML('beforeend', questionTemplate);
+    questionIndex++;
+  });
+
+  // Remove question
+  document.getElementById('questions-container').addEventListener('click', function (e) {
+    if (e.target.classList.contains('remove-question')) {
+      e.target.closest('.question-item').remove();
+    }
+  });
 </script>
-@endpush
+@endsection
