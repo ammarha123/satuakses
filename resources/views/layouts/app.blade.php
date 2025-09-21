@@ -124,6 +124,20 @@
             </div>
         </div>
     </nav>
+    <button id="accessibility-toggle" class="btn btn-primary rounded-circle position-fixed bottom-0 end-0 m-3"
+        style="z-index: 1100; width: 48px; height: 48px;">
+        <i class="bi bi-universal-access"></i>
+    </button>
+
+    <div id="accessibility-toolbar"
+        class="position-fixed bottom-0 end-0 m-3 p-3 bg-white border rounded shadow-lg d-none"
+        style="z-index: 1050; width: 220px;">
+        <h6 class="fw-bold mb-2">Aksesibilitas</h6>
+        <button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="changeFontSize(1)">Perbesar Font</button>
+        <button class="btn btn-sm btn-outline-primary w-100 mb-2" onclick="changeFontSize(-1)">Perkecil Font</button>
+        <button class="btn btn-sm btn-outline-danger w-100" onclick="resetFontSize()">Reset Font</button>
+    </div>
+
 
     @yield('content')
 
@@ -135,6 +149,43 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      
+        const BASE_ROOT_FONT = 16;
+        const MIN_ROOT_FONT = 12;
+        const MAX_ROOT_FONT = 24;
+
+        function getSavedRootFont() {
+            return parseFloat(localStorage.getItem('rootFontSize')) || BASE_ROOT_FONT;
+        }
+
+        function applyRootFontSize(px) {
+            px = Math.min(Math.max(px, MIN_ROOT_FONT), MAX_ROOT_FONT);
+            document.documentElement.style.fontSize = px + 'px';
+            localStorage.setItem('rootFontSize', px);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyRootFontSize(getSavedRootFont());
+        });
+
+        function changeFontSize(deltaSteps) {
+            const current = getSavedRootFont();
+            const next = current + (deltaSteps * 1);
+            applyRootFontSize(next);
+        }
+
+        function resetFontSize() {
+            applyRootFontSize(BASE_ROOT_FONT);
+        }
+
+        const toggleBtn = document.getElementById('accessibility-toggle');
+        const toolbar = document.getElementById('accessibility-toolbar');
+
+        toggleBtn.addEventListener('click', () => {
+            toolbar.classList.toggle('d-none');
+        });
+    </script>
     @stack('scripts')
 </body>
 

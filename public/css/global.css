@@ -39,5 +39,62 @@
     }
 
     .main-content {
-        padding-top: 290px; /* Sesuaikan sesuai tinggi kartu */
+        padding-top: 290px; 
     }
+
+    body.high-contrast {
+        background-color: #000 !important;
+        color: #FFD700 !important;
+    }
+
+    body.high-contrast a {
+        color: #00FFFF !important;
+        text-decoration: underline;
+    }
+
+    body.dark-mode {
+        background-color: #121212 !important;
+        color: #e0e0e0 !important;
+    }
+
+    .job-card {
+    transition: all 0.25s ease;
+    border: 1px solid #e6f0ff;
+}
+
+.job-card:hover {
+    border-color: #3b82f6; 
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+    transform: translateY(-3px);
+}
+
+.chip {
+    border-radius: 9999px;
+    background: #f6f7fb;
+    border: 1px solid #e9ebf2;
+    font-size: .75rem;
+    padding: .2rem .6rem;
+    display: inline-block;
+}
+
+.chip-blue {
+    background: #e6f0ff;
+    border-color: #3b82f6;
+    color: #1d4ed8;
+    font-weight: 500;
+}
+
+  .hero-jobs {
+            background: linear-gradient(135deg, #86d3ff 0%, #6fc0ff 35%, #5aa8ff 100%);
+        }
+
+        .hero-illustration {
+            max-width: 220px;
+        }
+
+        .filter-box {
+            background: #fff;
+            border: 1px solid #E7E7E7;
+            border-radius: .5rem
+        }
+

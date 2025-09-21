@@ -58,9 +58,28 @@
                         @if ($submodule)
                             <h4 class="fw-bold mb-3">{{ $submodule->title ?: 'Submodul' }}</h4>
 
-                            @if ($submodule->video_url)
+                            @php
+                                function youtubeEmbed($url)
+                                {
+                                    if (preg_match('/youtu\.be\/([^\?&]+)/', $url, $matches)) {
+                                        return 'https://www.youtube.com/embed/' . $matches[1];
+                                    } elseif (preg_match('/v=([^\?&]+)/', $url, $matches)) {
+                                        return 'https://www.youtube.com/embed/' . $matches[1];
+                                    } elseif (str_contains($url, '/embed/')) {
+                                        return $url;
+                                    }
+                                    return null;
+                                }
+
+                                $embedUrl = youtubeEmbed($submodule->video_url ?? '');
+                            @endphp
+
+                            @if ($embedUrl)
                                 <div class="ratio ratio-16x9 mb-3">
-                                    <iframe src="{{ $submodule->video_url }}" allowfullscreen></iframe>
+                                    <iframe src="{{ $embedUrl }}" title="YouTube video player"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen>
+                                    </iframe>
                                 </div>
                             @endif
 

@@ -121,7 +121,7 @@ class CoursePublicController extends Controller
 
         $course->users()->syncWithoutDetaching([Auth::id()]);
 
-        return redirect()->route('kursus.learn', $course->slug)
+        return redirect()->route('kursus.show', $course->slug)
             ->with('success', 'Berhasil mendaftar. Selamat belajar!');
     }
 

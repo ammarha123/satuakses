@@ -75,24 +75,31 @@
         </div>
 
         <div class="mb-3">
-            <label>Persyaratan</label>
-            <textarea name="persyaratan" class="form-control" rows="3"></textarea>
+            <label>Persyaratan <small class="text-muted">(pisahkan dengan enter untuk list)</small></label>
+            <textarea name="persyaratan" class="form-control" rows="3">{{ old('persyaratan', $lowongan->persyaratan ?? '') }}</textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label>Fasilitas Disabilitas <small class="text-muted">(pisahkan dengan enter untuk list)</small></label>
+            <textarea name="fasilitas_disabilitas" class="form-control" rows="2">{{ old('fasilitas_disabilitas', $lowongan->fasilitas_disabilitas ?? '') }}</textarea>
         </div>
 
         <div class="mb-3">
-            <label>Fasilitas Disabilitas</label>
-            <textarea name="fasilitas_disabilitas" class="form-control" rows="2"></textarea>
-        </div>
+    <label for="gaji_min" class="form-label">Gaji Minimum</label>
+    <input type="text" id="gaji_min_display" class="form-control"
+           value="{{ old('gaji_min', $job->gaji_min ?? '') }}">
+    <input type="hidden" name="gaji_min" id="gaji_min"
+           value="{{ old('gaji_min', $job->gaji_min ?? '') }}">
+</div>
 
-        <div class="mb-3">
-            <label>Gaji Minimum</label>
-            <input type="number" name="gaji_min" class="form-control">
-        </div>
+<div class="mb-3">
+    <label for="gaji_max" class="form-label">Gaji Maksimum</label>
+    <input type="text" id="gaji_max_display" class="form-control"
+           value="{{ old('gaji_max', $job->gaji_max ?? '') }}">
+    <input type="hidden" name="gaji_max" id="gaji_max"
+           value="{{ old('gaji_max', $job->gaji_max ?? '') }}">
+</div>
 
-        <div class="mb-3">
-            <label>Gaji Maksimum</label>
-            <input type="number" name="gaji_max" class="form-control">
-        </div>
 
         <div class="mb-3">
             <label>Kuota</label>
@@ -171,5 +178,32 @@
                 }
             });
         });
+
+        function formatRupiah(angka) {
+    if (!angka) return '';
+    return 'Rp ' + angka.toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+function unformatRupiah(str) {
+    return str.replace(/[^0-9]/g, '');
+}
+
+['gaji_min', 'gaji_max'].forEach(name => {
+    const hidden = document.getElementById(name);
+    const display = document.getElementById(name + '_display');
+
+    // format awal saat load
+    if (hidden.value) {
+        display.value = formatRupiah(hidden.value);
+    }
+
+    // saat user input
+    display.addEventListener('input', function () {
+        let raw = unformatRupiah(this.value);
+        hidden.value = raw;
+        this.value = formatRupiah(raw);
+    });
+});
     </script>
 @endpush

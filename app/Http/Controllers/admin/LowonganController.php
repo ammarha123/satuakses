@@ -20,16 +20,16 @@ class LowonganController extends Controller
     public function create()
     {
         $kategoriLowongans = KategoriLowongan::all();
-        $companies = Company::orderBy('name')->get(['id','name']); 
-        return view('admin.lowongan.create', compact('kategoriLowongans','companies'));
+        $companies = Company::orderBy('name')->get(['id', 'name']);
+        return view('admin.lowongan.create', compact('kategoriLowongans', 'companies'));
     }
 
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            
-            'company_id' => 'required|exists:companies,id', 
+
+            'company_id' => 'required|exists:companies,id',
             'posisi' => 'required|string',
             'slug' => 'nullable|string|unique:lowongans,slug',
             'dekskripsi' => 'required|string',
@@ -47,16 +47,19 @@ class LowonganController extends Controller
             'is_terbuka' => 'nullable|boolean',
         ]);
 
-      
+
         $company = Company::findOrFail($validated['company_id']);
-        $validated['perusahaan'] = $company->name; 
-        unset($validated['company_id']); 
+        $validated['perusahaan'] = $company->name;
+        unset($validated['company_id']);
+
+        $validated['gaji_min'] = $request->gaji_min ? preg_replace('/\D/', '', $request->gaji_min) : null;
+        $validated['gaji_max'] = $request->gaji_max ? preg_replace('/\D/', '', $request->gaji_max) : null;
 
         if ($request->posting_option === 'now') {
             $validated['waktu_posting'] = now();
         }
 
-        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['posisi'].'-'.Str::random(5));
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['posisi'] . '-' . Str::random(5));
 
         Lowongan::create($validated);
 
@@ -66,21 +69,26 @@ class LowonganController extends Controller
     public function edit(Lowongan $lowongan)
     {
         $kategoriLowongans = KategoriLowongan::all();
-        $companies = Company::orderBy('name')->get(['id','name']);
+        $companies = Company::orderBy('name')->get(['id', 'name']);
 
         $selectedCompanyId = Company::where('name', $lowongan->perusahaan)->value('id');
 
-        return view('admin.lowongan.edit', compact('lowongan','kategoriLowongans','companies','selectedCompanyId'));
+        return view('admin.lowongan.edit', compact('lowongan', 'kategoriLowongans', 'companies', 'selectedCompanyId'));
     }
 
     public function update(Request $request, Lowongan $lowongan)
     {
+        // bersihkan gaji dulu
+        $request->merge([
+            'gaji_min' => $request->gaji_min ? preg_replace('/\D/', '', $request->gaji_min) : null,
+            'gaji_max' => $request->gaji_max ? preg_replace('/\D/', '', $request->gaji_max) : null,
+        ]);
+
         $validated = $request->validate([
-           
             'company_id' => 'required|exists:companies,id',
             'posisi' => 'required|string',
-            'slug' => 'nullable|string|unique:lowongans,slug,'.$lowongan->id,
-            'dekskripsi' => 'required|string',
+            'slug' => 'nullable|string|unique:lowongans,slug,' . $lowongan->id,
+            'deskripsi' => 'required|string',
             'lokasi' => 'required|string',
             'tipe_pekerjaan' => 'nullable|string',
             'persyaratan' => 'nullable|string',
@@ -96,19 +104,19 @@ class LowonganController extends Controller
         ]);
 
         $company = Company::findOrFail($validated['company_id']);
-        $validated['perusahaan'] = $company->name; // ✅ update nama perusahaan
-        unset($validated['company_id']);
+        $validated['perusahaan'] = $company->name;
 
         if ($request->posting_option === 'now') {
             $validated['waktu_posting'] = now();
         }
 
-        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['posisi'].'-'.Str::random(5));
+        $validated['slug'] = $validated['slug'] ?? Str::slug($validated['posisi'] . '-' . Str::random(5));
 
         $lowongan->update($validated);
 
         return redirect()->route('admin.lowongan.index')->with('success', 'Lowongan berhasil diperbarui.');
     }
+
 
     public function show(Lowongan $lowongan)
     {

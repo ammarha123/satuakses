@@ -16,6 +16,7 @@ use App\Http\Controllers\PublicController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\User\CoursePublicController;
 use App\Http\Controllers\User\LamaranController;
+use App\Http\Controllers\WorkExperienceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PublicController::class, 'index'])->name('index');
@@ -35,6 +36,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/lowongan', [LowonganPublicController::class, 'index'])->name('lowongan.index');
     Route::get('/lowongan/{slug}', [LowonganPublicController::class, 'show'])
         ->name('lowongan.detail');
+    Route::post('/profile/work-experience', [WorkExperienceController::class, 'store'])->name('work.store');
+    Route::get('/profile/work-experience/{experience}/edit', [WorkExperienceController::class, 'edit'])->name('work.edit');
+    Route::patch('/profile/work-experience/{experience}', [WorkExperienceController::class, 'update'])->name('work.update');
+    Route::delete('/profile/work-experience/{experience}', [WorkExperienceController::class, 'destroy'])->name('work.destroy');
+    Route::get('/companies/{company}', [LowonganPublicController::class, 'showCompany'])->name('companies.show');
 });
 
 

@@ -86,4 +86,11 @@ class CompanyController extends Controller
 
         return view('admin.company.create_success', compact('company', 'password'));
     }
+
+    public function show(Company $company)
+    {
+        // eager load anything needed, e.g. jobs count
+        $company->loadCount('lowongans'); // if relation exists
+        return view('companies.show', compact('company'));
+    }
 }

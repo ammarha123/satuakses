@@ -40,4 +40,9 @@ class Lowongan extends Model
     {
         return $this->hasMany(Application::class);
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
 }
